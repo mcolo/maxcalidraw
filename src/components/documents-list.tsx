@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { getDocuments } from '@/db/documents';
 
 export default function DocumentsList() {
-  const [documents, setDocuments] = useState<Record<string, any>[]>([]);
+  const [documents, setDocuments] = useState<{ id: string; name: string; updatedAt: Date }[]>([]);
 
   useEffect(() => {
     getDocuments().then((documents) => {
@@ -20,7 +20,7 @@ export default function DocumentsList() {
         {documents.map((document) => (
           <li key={document.id}>
             <Link href={`/draw?documentId=${document.id}`}>
-              {document.name} - {document.updatedAt}
+              {document.name} - {new Date(document.updatedAt).toLocaleString('en-US')}
             </Link>
           </li>
         ))}

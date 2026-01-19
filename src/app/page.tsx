@@ -1,6 +1,7 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import DocumentsList from '@/components/documents-list';
 
 export default function App() {
   const { isSignedIn, user, isLoaded } = useUser();
@@ -15,9 +16,8 @@ export default function App() {
 
   return (
     <section>
-      <Link href='/draw' className='text-sm text-blue-500'>
-        Start a new file
-      </Link>
+      <Link href='/draw'>Start a new file</Link>
+      <DocumentsList />
     </section>
   );
 }

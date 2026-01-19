@@ -2,56 +2,103 @@
 
 import dynamic from 'next/dynamic';
 import '@excalidraw/excalidraw/index.css';
-import { ArrowBigLeft, Save } from 'lucide-react';
+import { ArrowBigLeft } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
-import { getDocumentById } from '@/db/documents';
+import { AppState } from '@excalidraw/excalidraw/types';
+import { createDocument, getDocumentById, updateDocument } from '@/db/documents';
+import {
+  clearCanvasStateFromLocalStorage,
+  hasCanvasElementsChanged,
+  setCanvasStateToLocalStorage,
+} from '@/utils/local-storage';
+import throttle from '@/utils/throttle';
+import { ImportedDataState } from '@excalidraw/excalidraw/data/types';
 
 const Excalidraw = dynamic(async () => (await import('@excalidraw/excalidraw')).Excalidraw, {
   ssr: false,
 });
 
 export default function Draw() {
-  const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const documentId = searchParams.get('documentId');
+  let documentId = searchParams.get('documentId');
+  const [initialData, setInitialData] = useState<ImportedDataState>({
+    elements: [],
+    appState: null,
+  });
 
-  useEffect(() => {
-    if (documentId) {
-      handleLoad(documentId);
-    }
-  }, [documentId]);
-
+  /**
+   * Go to the all files page
+   * @returns void
+   */
   const goToAllFiles = () => {
     router.push('/');
   };
 
-  const handleSave = async () => {
-    if (!excalidrawAPI) return;
-    // const { serializeAsJSON } = await import('@excalidraw/excalidraw');
-    // const elements = excalidrawAPI.getSceneElements();
-    // const appState = excalidrawAPI.getAppState();
-    // const files = undefined as unknown as BinaryFiles;
-    // const type = 'local';
-    // const json = serializeAsJSON(elements, appState, files, type);
-    // console.log(json);
+  /**
+   * Load an existing document by its ID
+   * @param documentId - The ID of the document to load
+   * @returns void
+   */
+  const loadExistingDocument = async (documentId: string) => {
+    try {
+      const document = await getDocumentById(documentId);
+      const { data } = document as { data: ImportedDataState };
+      // collaborators converts to an object when JSON stringified
+      // need to convert it back to a Map
+      if (data.appState) {
+        data.appState = {
+          ...data.appState,
+          collaborators: new Map(),
+        };
+      }
+      setInitialData(data);
+    } catch (error) {
+      console.error('Error loading existing document', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLoad = async (documentId: string) => {
-    if (!excalidrawAPI) return;
-    const { restore } = await import('@excalidraw/excalidraw');
-    const document = await getDocumentById(documentId);
-    if (!document) return;
-    const importedDataState = JSON.parse(document[0].data as string);
-    restore(importedDataState, null, null);
-
-    // const { loadFromBlob } = await import('@excalidraw/excalidraw');
-    // const scene = await loadFromBlob(file, null, null);
-    // excalidrawAPI.updateScene(scene);
+  /**
+   * Create a new document
+   * @returns void
+   */
+  const createNewDocument = async () => {
+    const newDocumentId = await createDocument(
+      'Untitled',
+      JSON.stringify({ elements: [], appState: null }),
+    );
+    if (newDocumentId) {
+      documentId = newDocumentId;
+      const newPath = `/draw?documentId=${newDocumentId}`;
+      window.history.replaceState(null, '', newPath);
+    }
   };
 
+  /**
+   * Handle changes to the canvas
+   * @param elements - The elements
+   * @param appState - The app state
+   * @returns void
+   */
+  const handleChange = throttle((elements: any, appState: AppState) => {
+    if (loading) return;
+    console.log('handleChange');
+    if (!documentId) return;
+    const hasElementsChanged = hasCanvasElementsChanged(elements);
+    if (hasElementsChanged) {
+      setCanvasStateToLocalStorage(elements, appState);
+      updateDocument(documentId, JSON.stringify({ elements, appState }));
+    }
+  }, 250);
+
+  /**
+   * Render the top right UI within the Excalidraw component
+   * @returns React.ReactNode
+   */
   const renderTopRightUI = () => {
     return (
       <>
@@ -61,20 +108,42 @@ export default function Draw() {
         >
           <ArrowBigLeft className='h-4 w-4' /> All Files
         </span>
-        <span
-          className='flex cursor-pointer items-center gap-2 rounded-lg bg-[#6965db] p-[.625rem] text-xs font-bold text-white hover:bg-[#5b57d1]'
-          onClick={handleSave}
-        >
-          <Save className='h-4 w-4' /> Save File
-        </span>
       </>
     );
   };
 
+  /**
+   * Load the initial data for the document
+   * @returns void
+   */
+  useEffect(() => {
+    if (documentId) {
+      loadExistingDocument(documentId);
+    } else {
+      createNewDocument();
+    }
+  }, [documentId]);
+
+  /**
+   * Clear the canvas state from local storage when the component unmounts
+   * @returns void
+   */
+  useEffect(() => {
+    return () => {
+      clearCanvasStateFromLocalStorage();
+    };
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Excalidraw
-      excalidrawAPI={(api) => setExcalidrawAPI(api)}
+      isCollaborating={false}
+      initialData={initialData}
       renderTopRightUI={renderTopRightUI}
+      onChange={handleChange}
     />
   );
 }

@@ -1,4 +1,4 @@
-'user server';
+'use server';
 
 import { db } from './drizzle';
 import { documents } from './schema';
@@ -27,7 +27,7 @@ export async function getDocuments() {
  */
 export async function getDocumentById(documentId: string) {
   const data = await db.select().from(documents).where(eq(documents.id, documentId));
-  return data;
+  return data[0];
 }
 
 /**
@@ -56,8 +56,16 @@ export async function deleteDocument(documentId: string) {
  * Create a new document
  * @param name
  * @param data
- * @returns void
+ * @returns The ID of the created document or null if the document creation failed
  */
-export async function createDocument(name: string, data: string) {
-  await db.insert(documents).values({ name, data });
+export async function createDocument(name: string, data: string): Promise<string | null> {
+  const [insertedId] = await db
+    .insert(documents)
+    .values({ name, data })
+    .returning({ id: documents.id });
+  if (!insertedId || !insertedId.id) {
+    console.error('Failed to create document');
+    return null;
+  }
+  return insertedId.id;
 }
