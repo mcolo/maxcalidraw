@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
-import SiteNav from '@/components/site-nav';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,8 +28,6 @@ export default function RootLayout({
       <html lang='en'>
         <body className={`${geistSans.variable} ${geistMono.variable} h-screen antialiased`}>
           <main className='h-screen w-screen'>{children}</main>
-          {/* <SiteNav />
-          <main className='h-[calc(100vh-2rem)] w-full'>{children}</main> */}
         </body>
       </html>
     </ClerkProvider>
