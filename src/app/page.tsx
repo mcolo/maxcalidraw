@@ -18,12 +18,6 @@ export default function App() {
       <Link href='/draw' className='text-sm text-blue-500'>
         Start a new file
       </Link>
-      <h1>List of Files</h1>
-      <ul>
-        <li>File 1</li>
-        <li>File 2</li>
-        <li>File 3</li>
-      </ul>
     </section>
   );
 }

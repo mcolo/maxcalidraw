@@ -3,9 +3,10 @@
 import dynamic from 'next/dynamic';
 import '@excalidraw/excalidraw/index.css';
 import { ArrowBigLeft, Save } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
+import { getDocumentById } from '@/db/documents';
 
 const Excalidraw = dynamic(async () => (await import('@excalidraw/excalidraw')).Excalidraw, {
   ssr: false,
@@ -14,6 +15,14 @@ const Excalidraw = dynamic(async () => (await import('@excalidraw/excalidraw')).
 export default function Draw() {
   const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const documentId = searchParams.get('documentId');
+
+  useEffect(() => {
+    if (documentId) {
+      handleLoad(documentId);
+    }
+  }, [documentId]);
 
   const goToAllFiles = () => {
     router.push('/');
@@ -30,8 +39,14 @@ export default function Draw() {
     // console.log(json);
   };
 
-  const handleLoad = async () => {
+  const handleLoad = async (documentId: string) => {
     if (!excalidrawAPI) return;
+    const { restore } = await import('@excalidraw/excalidraw');
+    const document = await getDocumentById(documentId);
+    if (!document) return;
+    const importedDataState = JSON.parse(document[0].data as string);
+    restore(importedDataState, null, null);
+
     // const { loadFromBlob } = await import('@excalidraw/excalidraw');
     // const scene = await loadFromBlob(file, null, null);
     // excalidrawAPI.updateScene(scene);
