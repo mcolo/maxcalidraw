@@ -5,7 +5,7 @@ import '@excalidraw/excalidraw/index.css';
 import { ArrowBigLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { AppState } from '@excalidraw/excalidraw/types';
+import { AppState, BinaryFileData } from '@excalidraw/excalidraw/types';
 import { getDocumentById, updateDocument } from '@/db/documents';
 import {
   clearCanvasStateFromLocalStorage,
@@ -69,16 +69,14 @@ export default function DrawClientComponent({ documentId }: { documentId: string
    * @param appState - The app state
    * @returns void
    */
-  const handleChange = throttle((elements: any, appState: AppState) => {
+  const handleChange = throttle((elements: any, appState: AppState, files: BinaryFileData[]) => {
     if (loading) return;
-    console.log('handleChange');
-    if (!documentId) return;
     const hasElementsChanged = hasCanvasElementsChanged(elements);
     if (hasElementsChanged) {
       setCanvasStateToLocalStorage(elements, appState);
-      updateDocument(documentId, JSON.stringify({ elements, appState }));
+      updateDocument(documentId, JSON.stringify({ elements, appState, files }));
     }
-  }, 250);
+  }, 500);
 
   /**
    * Render the top right UI within the Excalidraw component
