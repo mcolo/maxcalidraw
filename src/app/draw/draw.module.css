@@ -7,7 +7,7 @@
   border-radius: 0.5rem;
   background-color: #ececf4;
   color: black;
-  padding: 0.625rem;
+  padding: 0 0.625rem;
   border: none;
   cursor: pointer;
   font-weight: 400;
@@ -20,5 +20,5 @@
 .documentName {
   font-size: 1rem;
   font-weight: 600;
-  padding: 0.625rem 0;
+  line-height: 2.5rem;
 }

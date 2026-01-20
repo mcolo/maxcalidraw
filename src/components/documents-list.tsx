@@ -6,7 +6,9 @@ import { getDocuments } from '@/db/documents';
 import styles from './documents-list.module.css';
 
 export default function DocumentsList() {
-  const [documents, setDocuments] = useState<{ id: string; name: string; updatedAt: Date }[]>([]);
+  const [documents, setDocuments] = useState<
+    { id: string; name: string; updatedAt: Date; createdAt: Date }[]
+  >([]);
 
   useEffect(() => {
     getDocuments().then((documents) => {
@@ -20,6 +22,8 @@ export default function DocumentsList() {
       <div className={styles.tableHeader}>
         <span className={styles.tableHeaderCell}>Name</span>
         <span className={styles.tableHeaderCell}>Last Updated At</span>
+        <span className={styles.tableHeaderCell}>Created At</span>
+        <span className={styles.tableHeaderCell}>ID</span>
       </div>
       {documents.map((document) => (
         <div key={document.id} className={styles.tableRow}>
@@ -29,6 +33,10 @@ export default function DocumentsList() {
           <span className={styles.tableCell}>
             {new Date(document.updatedAt).toLocaleString('en-US')}
           </span>
+          <span className={styles.tableCell}>
+            {new Date(document.createdAt).toLocaleString('en-US')}
+          </span>
+          <span className={styles.tableCell}>{document.id}</span>
         </div>
       ))}
     </section>

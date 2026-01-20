@@ -14,9 +14,10 @@ export async function getDocuments() {
       id: documents.id,
       name: documents.name,
       updatedAt: documents.updatedAt,
+      createdAt: documents.createdAt,
     })
     .from(documents)
-    .orderBy(desc(documents.updatedAt));
+    .orderBy(desc(documents.createdAt));
   return data;
 }
 
