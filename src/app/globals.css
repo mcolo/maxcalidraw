@@ -73,7 +73,39 @@ h6 {
 */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --accent-color: oklch(28.2% 0.091 267.935);
+  --accent-color-hover: oklch(37.9% 0.146 265.522);
+  --link-color: oklch(48.8% 0.243 264.376);
+  --link-color-hover: oklch(62.3% 0.214 259.815);
+  font-family: var(--font-geist-sans);
+  height: 100vh;
+  width: 100vw;
+}
+
+main {
+  height: 100vh;
+  width: 100vw;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  &:hover {
+    background-color: var(--accent-color-hover);
+  }
+}
+
+.btn:disabled {
+  background-color: silver;
+  cursor: not-allowed;
 }

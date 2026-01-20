@@ -1,0 +1,14 @@
+.header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  background-color: whitesmoke;
+}
+
+.section {
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2rem;
+}

@@ -4,9 +4,9 @@ import dynamic from 'next/dynamic';
 import '@excalidraw/excalidraw/index.css';
 import { ArrowBigLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppState } from '@excalidraw/excalidraw/types';
-import { createDocument, getDocumentById, updateDocument } from '@/db/documents';
+import { getDocumentById, updateDocument } from '@/db/documents';
 import {
   clearCanvasStateFromLocalStorage,
   hasCanvasElementsChanged,
@@ -14,20 +14,16 @@ import {
 } from '@/utils/local-storage';
 import throttle from '@/utils/throttle';
 import { ImportedDataState } from '@excalidraw/excalidraw/data/types';
+import styles from './draw.module.css';
 
 const Excalidraw = dynamic(async () => (await import('@excalidraw/excalidraw')).Excalidraw, {
   ssr: false,
 });
 
-export default function DrawClientComponent({
-  searchParams,
-}: {
-  searchParams: Promise<{ documentId: string }>;
-}) {
+export default function DrawClientComponent({ documentId }: { documentId: string }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const params = use(searchParams);
-  let documentId = params.documentId;
+  const [documentName, setDocumentName] = useState('');
   const [initialData, setInitialData] = useState<ImportedDataState>({
     elements: [],
     appState: null,
@@ -49,6 +45,7 @@ export default function DrawClientComponent({
   const loadExistingDocument = async (documentId: string) => {
     try {
       const document = await getDocumentById(documentId);
+      setDocumentName(document.name);
       const { data } = document as { data: ImportedDataState };
       // collaborators converts to an object when JSON stringified
       // need to convert it back to a Map
@@ -64,23 +61,6 @@ export default function DrawClientComponent({
     } finally {
       setLoading(false);
     }
-  };
-
-  /**
-   * Create a new document
-   * @returns void
-   */
-  const createNewDocument = async () => {
-    const newDocumentId = await createDocument(
-      'Untitled',
-      JSON.stringify({ elements: [], appState: null }),
-    );
-    if (newDocumentId) {
-      documentId = newDocumentId;
-      const newPath = `/draw?documentId=${newDocumentId}`;
-      window.history.replaceState(null, '', newPath);
-    }
-    setLoading(false);
   };
 
   /**
@@ -107,11 +87,9 @@ export default function DrawClientComponent({
   const renderTopRightUI = () => {
     return (
       <>
-        <span
-          className='flex cursor-pointer items-center gap-2 rounded-lg bg-[#ececf4] p-[.625rem] text-xs text-slate-900 hover:bg-[#f1f0ff]'
-          onClick={goToAllFiles}
-        >
-          <ArrowBigLeft className='h-4 w-4' /> All Files
+        <span className={styles.documentName}>{documentName}</span>
+        <span className={styles.backBtn} onClick={goToAllFiles}>
+          <ArrowBigLeft size={16} /> All Files
         </span>
       </>
     );
@@ -125,7 +103,7 @@ export default function DrawClientComponent({
     if (documentId) {
       loadExistingDocument(documentId);
     } else {
-      createNewDocument();
+      router.push('/');
     }
   }, [documentId]);
 

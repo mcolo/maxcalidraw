@@ -1,0 +1,38 @@
+.section {
+  width: 100%;
+}
+
+.h1 {
+  margin: 0 0 0.5rem;
+}
+
+.tableHeader {
+  display: flex;
+  gap: 1rem;
+}
+
+.tableHeaderCell {
+  font-weight: bold;
+  min-width: 150px;
+}
+
+.tableRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.tableRow:nth-child(odd) {
+  background-color: antiquewhite;
+}
+
+.tableCell {
+  min-width: 150px;
+  padding: 0.5rem;
+}
+
+.tableCell a {
+  color: var(--link-color);
+  &:hover {
+    color: var(--link-color-hover);
+  }
+}

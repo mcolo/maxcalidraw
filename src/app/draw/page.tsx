@@ -1,10 +1,20 @@
-import { Suspense } from 'react';
+import { Suspense, use } from 'react';
 import DrawClientComponent from './client';
+import { redirect } from 'next/navigation';
 
-export default function Page({ searchParams }: { searchParams: Promise<{ documentId: string }> }) {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ documentId: string }>;
+}) {
+  const documentId = (await searchParams).documentId;
+  if (!documentId) {
+    return redirect('/');
+  }
+
   return (
-    <Suspense>
-      <DrawClientComponent searchParams={searchParams} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <DrawClientComponent documentId={documentId} />
     </Suspense>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getDocuments } from '@/db/documents';
+import styles from './documents-list.module.css';
 
 export default function DocumentsList() {
   const [documents, setDocuments] = useState<{ id: string; name: string; updatedAt: Date }[]>([]);
@@ -14,17 +15,22 @@ export default function DocumentsList() {
   }, []);
 
   return (
-    <>
-      <h1>Documents</h1>
-      <ul>
-        {documents.map((document) => (
-          <li key={document.id}>
-            <Link href={`/draw?documentId=${document.id}`}>
-              {document.name} - {new Date(document.updatedAt).toLocaleString('en-US')}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </>
+    <section className={styles.section}>
+      <h1 className={styles.h1}>Documents</h1>
+      <div className={styles.tableHeader}>
+        <span className={styles.tableHeaderCell}>Name</span>
+        <span className={styles.tableHeaderCell}>Last Updated At</span>
+      </div>
+      {documents.map((document) => (
+        <div key={document.id} className={styles.tableRow}>
+          <span className={styles.tableCell}>
+            <Link href={`/draw?documentId=${document.id}`}>{document.name}</Link>
+          </span>
+          <span className={styles.tableCell}>
+            {new Date(document.updatedAt).toLocaleString('en-US')}
+          </span>
+        </div>
+      ))}
+    </section>
   );
 }
