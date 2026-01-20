@@ -73,10 +73,10 @@ h6 {
 */
 
 body {
-  --accent-color: oklch(28.2% 0.091 267.935);
-  --accent-color-hover: oklch(37.9% 0.146 265.522);
-  --link-color: oklch(48.8% 0.243 264.376);
-  --link-color-hover: oklch(62.3% 0.214 259.815);
+  --accent-color: midnightblue;
+  --accent-color-hover: mediumblue;
+  --link-color: blue;
+  --link-color-hover: midnightblue;
   font-family: var(--font-geist-sans);
   height: 100vh;
   width: 100vw;
