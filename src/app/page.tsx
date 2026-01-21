@@ -1,41 +1,18 @@
-'use client';
-
-import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
-import DocumentsList from '@/components/documents-list';
+import { auth } from '@clerk/nextjs/server';
+import { SignInButton, SignOutButton } from '@clerk/nextjs';
+import { LineSquiggle, LogInIcon, LogOutIcon } from 'lucide-react';
 import styles from './home.module.css';
-import { createDocument } from '@/db/documents';
-import { useRouter } from 'next/navigation';
-import { CirclePlus, LogInIcon, LogOutIcon } from 'lucide-react';
-import { useState } from 'react';
+import NewDocumentButton from '@/components/new-documents-button';
+import DocumentsList from '@/components/documents-list';
+import { Suspense } from 'react';
 
-export default function App() {
-  const { isSignedIn, user, isLoaded } = useUser();
-  const router = useRouter();
-  const [creatingDocument, setCreatingDocument] = useState(false);
+export default async function Page() {
+  const { isAuthenticated } = await auth();
 
-  const handleNewDocument = async () => {
-    setCreatingDocument(true);
-    const name = prompt('Enter a name for your new document');
-    if (!name) {
-      setCreatingDocument(false);
-      return;
-    }
-    const newDocumentId = await createDocument(
-      name,
-      JSON.stringify({ elements: [], appState: null }),
-    );
-    setCreatingDocument(false);
-    if (!newDocumentId) return;
-    router.push(`/draw?documentId=${newDocumentId}`);
-  };
-
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
-
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     return (
       <header className={styles.header}>
+        <Logo />
         <SignInButton>
           <button className='btn'>
             Log In
@@ -49,6 +26,7 @@ export default function App() {
   return (
     <>
       <header className={styles.header}>
+        <Logo />
         <SignOutButton>
           <button className='btn'>
             Log Out
@@ -56,13 +34,22 @@ export default function App() {
           </button>
         </SignOutButton>
       </header>
-      <section className={styles.section}>
-        <button className='btn' onClick={handleNewDocument} disabled={creatingDocument}>
-          Start a New Document
-          <CirclePlus size={18} />
-        </button>
-        <DocumentsList />
-      </section>
+      <main className={styles.mainContent}>
+        <NewDocumentButton />
+        <section style={{ width: '100%' }}>
+          <Suspense fallback={<div>Loading...</div>}>
+            <DocumentsList />
+          </Suspense>
+        </section>
+      </main>
     </>
+  );
+}
+
+function Logo() {
+  return (
+    <h1 className={styles.title}>
+      <LineSquiggle /> Maxcalidraw
+    </h1>
   );
 }

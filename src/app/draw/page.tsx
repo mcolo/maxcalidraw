@@ -12,9 +12,5 @@ export default async function Page({
     return redirect('/');
   }
 
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <DrawClientComponent documentId={documentId} />
-    </Suspense>
-  );
+  return <DrawClientComponent documentId={documentId} />;
 }

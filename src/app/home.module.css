@@ -1,11 +1,19 @@
 .header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem;
   background-color: whitesmoke;
 }
 
-.section {
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.mainContent {
   padding: 1rem;
   display: flex;
   align-items: flex-start;

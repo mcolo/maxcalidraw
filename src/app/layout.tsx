@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Maxcalidraw',
-  description: 'Personalized fork of Excalidraw',
+  description: 'Excalidraw clone for personal use',
 };
 
 export default function RootLayout({
@@ -26,9 +26,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang='en'>
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <main>{children}</main>
-        </body>
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>{children}</body>
       </html>
     </ClerkProvider>
   );

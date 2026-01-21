@@ -82,11 +82,6 @@ body {
   width: 100vw;
 }
 
-main {
-  height: 100vh;
-  width: 100vw;
-}
-
 .btn {
   display: flex;
   align-items: center;
