@@ -15,6 +15,7 @@ export async function getDocuments() {
       name: documents.name,
       updatedAt: documents.updatedAt,
       createdAt: documents.createdAt,
+      tags: documents.tags,
     })
     .from(documents)
     .orderBy(desc(documents.createdAt));

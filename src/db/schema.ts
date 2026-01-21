@@ -6,4 +6,5 @@ export const documents = pgTable('documents', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   data: jsonb('data').notNull(),
+  tags: text('tags').array().notNull().default([]),
 });
