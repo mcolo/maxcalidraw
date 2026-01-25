@@ -1,46 +1,84 @@
 .h1 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.75rem;
 }
 
-.tableHeader {
-  display: flex;
-  gap: 1rem;
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.tableHeaderCell {
-  font-weight: bold;
-  min-width: 16rem;
-  padding: 0 0 0 0.5rem;
-}
-
-.tableRow {
-  display: flex;
-  gap: 1rem;
-  font-family: var(--font-geist-mono);
+.table {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 0.875rem;
+  background-color: #fff;
+  font-family: var(--font-geist-mono);
 }
 
-.tableRow:nth-child(odd) {
-  background-color: linen;
+.headerCell {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.tableCell {
-  min-width: 16rem;
-  padding: 0.5rem;
+.tableRow:nth-child(even) {
+  background-color: ghostwhite;
 }
 
-.tableCell a {
+.tableRow:hover {
+  background-color: aliceblue;
+}
+
+.cell {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+.nameCell a {
   color: var(--link-color);
-  &:hover {
-    color: var(--link-color-hover);
-    text-decoration: none;
-  }
+  text-decoration: none;
+}
+
+.nameCell a:hover {
+  color: var(--link-color-hover);
+}
+
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: flex-start;
 }
 
 .tag {
-  border: 1px dashed black;
-  padding: 0.125rem 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
+  background-color: #eef2ff;
+  color: #4338ca;
   font-size: 0.75rem;
-  text-transform: lowercase;
+  border: 1px solid #c7d2fe;
+  word-break: keep-all;
+}
+
+.idCell {
+  font-family: var(--font-geist-mono);
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+@media (max-width: 720px) {
+  .table {
+    font-size: 0.9rem;
+  }
+
+  .cell,
+  .headerCell {
+    padding: 0.5rem;
+  }
 }
