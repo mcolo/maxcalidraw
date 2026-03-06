@@ -18,7 +18,7 @@ export async function getDocuments() {
       tags: documents.tags,
     })
     .from(documents)
-    .orderBy(desc(documents.createdAt));
+    .orderBy(desc(documents.updatedAt));
   return data;
 }
 
